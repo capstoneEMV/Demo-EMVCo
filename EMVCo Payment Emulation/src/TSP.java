@@ -11,6 +11,7 @@ import java.math.BigInteger;
 
 
 public class TSP {
+	static final String CODE_SEPARATOR = "%";
 	static final String HOST = "localhost";
 	static final int PREPORT = 3333;
 	static final int PORT = 4444;
@@ -19,7 +20,8 @@ public class TSP {
 	static final int MERCHANT = 2222;
 	String pending_card;
 	String expiry_date;
-	static final SecureRandom random = new SecureRandom();
+	String nonceFromClient;
+	static final SecureRandom NonceForClient = new SecureRandom();
 	
 	TSPDBService tspDB;
 	
@@ -29,8 +31,8 @@ public class TSP {
 		pending_card = null;
 	}
 	
-	public String nextSessionId() {
-		return new BigInteger(130, random).toString(32);
+	public String getNonceForClient() {
+		return new BigInteger(130, NonceForClient).toString(32);
 	}
 	
 	private String getClientTokenRequestorID() {
@@ -94,7 +96,8 @@ public class TSP {
 		}
 		
 		else if (type.equals("REQUEST_NONCE")) {
-			String nonce = nextSessionId();
+			nonceFromClient = packet[2];
+			String nonce = getNonceForClient();
 			packet[0] = "FROM_TSP";
 			packet[1] = "NONCE_RESPONSE";
 			packet[2] = nonce;
