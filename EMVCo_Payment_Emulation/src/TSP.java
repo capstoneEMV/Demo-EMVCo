@@ -27,11 +27,14 @@ public class TSP {
     static final int NEXTPORT = 5555;
     static final int CLIENTPORT = 1111;
     static final int MERCHANT = 2222;
+    static final String DSC_SEPARATOR = "||";
     String pending_card;
     String expiry_date;
     static final SecureRandom random = new SecureRandom();
     
     TSPDBService tspDB;
+    String nonce;
+    String clientNonce;
     
     public TSP() {
         tspDB = new TSPDBService();
@@ -43,13 +46,36 @@ public class TSP {
         return new BigInteger(130, random).toString(32);
     }
     
+    public Boolean verifyDSC(String[] packet) throws Exception{
+//    	packet[1] = "USE";
+//		packet[2] = "1789447862";
+//		packet[3] = client.TokenRequestor_ID;
+//		packet[4] = client.Token;
+//		packet[5] = client.Expiry_Date;
+//		packet[6] = serverNonce;
+//    	DSC =  TokenRequestor_ID + || + token + || + Expiry_Date + || + CliNonce + || + nonceFromServer;
+		String doHash;
+		doHash = packet[3] + DSC_SEPARATOR + packet[4] + DSC_SEPARATOR + packet[5]
+				+ DSC_SEPARATOR + clientNonce + DSC_SEPARATOR + nonce;
+		System.out.println(doHash);
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		byte [] byteStr = doHash.getBytes();
+		md.update(byteStr);
+		byte [] mdBytes = md.digest();
+		System.out.println(mdBytes);
+		System.out.println(packet[7]);
+		System.out.println(Integer.toString(mdBytes.hashCode()));
+		if (Integer.toString(mdBytes.hashCode()).equals(packet[7])){
+			return Boolean.TRUE;
+		}
+		else
+			return Boolean.FALSE;
+    }
     
-    
-    public void handleRequest(String[] packet) {
+    public void handleRequest(String[] packet) throws Exception{
         String origin = packet[0];
         String type = packet[1];
         String data = packet[2];
-        String date = packet[3];
         
         
         String token = null;
@@ -57,6 +83,7 @@ public class TSP {
         if (type.equals("ADD") && origin.equals("FROM_CLIENT")) {
             try {
                 // TODO Validate card with issuer first
+            	String date = packet[3];
                 pending_card = data;
                 expiry_date = date;
                 sendPacket(packet, NEXTPORT);
@@ -104,16 +131,23 @@ public class TSP {
         else if (type.equals("USE")) {
             String requestor_id = packet[3];
             if (validateRequestor(requestor_id) == true) {
-                packet[2] = getCard(data);
-                sendPacket(packet, NEXTPORT);
+            	//Check for DSC
+            	if (verifyDSC(packet)){
+            		String [] serverPkt = {"FROM_TSP", packet[4], packet[5]}; 
+            		//packet[2] = getCard(data);
+            		sendPacket(serverPkt, NEXTPORT);
+            		
+            		System.out.println("Packet is sent to ISSUER for validation");
+            	}
                 
-                System.out.println("Packet is sent to ISSUER for validation");
             } else
                 System.out.print("data not found");
         }
         
         else if (type.equals("REQUEST_NONCE")) {
-            String nonce = nextSessionId();
+            nonce = nextSessionId();
+            System.out.println(nonce);
+            clientNonce = packet[2];
             packet[0] = "FROM_TSP";
             packet[1] = "NONCE_RESPONSE";
             packet[2] = nonce;
@@ -158,6 +192,7 @@ public class TSP {
         String result = null;
         
         try {
+        	//System.out.println(requestor);
             result = tspDB.valiateRequestor(requestor);
             
         } catch (Exception e) {

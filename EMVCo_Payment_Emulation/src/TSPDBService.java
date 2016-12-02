@@ -14,7 +14,7 @@ public class TSPDBService {
     public void makeConnection(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/token_vault","root","root1234");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/tokenvault","root","root");
         }catch(Exception e){
             System.out.println(e);
         }
