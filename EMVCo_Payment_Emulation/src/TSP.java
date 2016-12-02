@@ -130,6 +130,7 @@ public class TSP {
         
         else if (type.equals("USE")) {
             String requestor_id = packet[3];
+            System.out.println(packet[3]);
             if (validateRequestor(requestor_id) == true) {
             	//Check for DSC
             	if (verifyDSC(packet)){
@@ -187,7 +188,6 @@ public class TSP {
         return token;
         
     }
-<<<<<<< HEAD
     
     private boolean validateRequestor(String requestor) {
         String result = null;
