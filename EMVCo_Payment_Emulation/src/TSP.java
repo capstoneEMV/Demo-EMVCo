@@ -18,8 +18,8 @@ import org.hibernate.annotations.ForeignKey;
 import com.chilkatsoft.*;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
-import java.text.ParseException;
-import java.util.*;
+import java.text.ParseException; 
+import java.util.*; 
 public class TSP {
     static final String HOST = "localhost";
     static final int PREPORT = 3333;
@@ -168,15 +168,15 @@ public class TSP {
         
         try {
             String md5 = getBinaryToken(card);
-            
-            
+
+          
         } catch (Exception e){
             e.printStackTrace();
         }
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        md.update(card.getBytes());
-        return Integer.toString(md.hashCode());
-    }
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		md.update(card.getBytes());
+		return Integer.toString(md.hashCode());
+	}
     private static String getBinaryToken(String card) throws UnsupportedEncodingException, NoSuchAlgorithmException{
         
         String TokenData = card;
@@ -187,6 +187,7 @@ public class TSP {
         return token;
         
     }
+<<<<<<< HEAD
     
     private boolean validateRequestor(String requestor) {
         String result = null;
@@ -317,4 +318,5 @@ public class TSP {
             e.printStackTrace();
         }
     }
+
 }

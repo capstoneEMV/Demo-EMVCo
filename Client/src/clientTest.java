@@ -3,7 +3,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
@@ -20,16 +19,10 @@ public class clientTest {
 	static final int TSPPORT = 4444;
 	static final String DSC_SEPARATOR = "||";
 	String[] final_packet = null;
-	String TokenRequestor_ID = "VALIDREQUESTOR1";
 	String Token;
 	String Expiry_Date;
-	String CliNonce;
-	static final SecureRandom nonce = new SecureRandom();
-
-
-	public String getClientNonce() {
-		return new BigInteger(130, nonce).toString(32);
-	}
+	String Token_requestor_id; 
+	
 	
 	public void sendPacket(String[] packet, int port) {
 	    try {
@@ -68,27 +61,9 @@ public class clientTest {
 				}
 			}
 			
-			Token = final_packet[2];
-			TokenRequestor_ID = final_packet[3];
-			Expiry_Date = final_packet[4];
-			
-			serverSocket.close();
-			socket.close();
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-
-	public String receiveNonce(){
-		try{
-			ServerSocket serverSocket = new ServerSocket(PORT);
-			Socket socket = serverSocket.accept();
-			ObjectInputStream objectInput = null;
-			InputStream in = socket.getInputStream();
-			objectInput = new ObjectInputStream(in);
-			final_packet = (String[]) objectInput.readObject();
-			String nonce;
+			Token = final_packet[0];
+			String TokenRequestor_ID = final_packet[2];
+			Expiry_Date = final_packet[3];
 			
 			serverSocket.close();
 			socket.close();
@@ -103,7 +78,6 @@ public class clientTest {
 			
 		}catch(Exception e){
 			e.printStackTrace();
-			return e.toString();
 		}
 	}
 	
@@ -123,6 +97,36 @@ public class clientTest {
 		return Integer.toString(mdBytes.hashCode());
 	}
 
+	 public String receiveNonce(){
+	        try{
+	        	ServerSocket serverSocket = new ServerSocket(PORT);
+				Socket socket = serverSocket.accept();
+	            ObjectInputStream objectInput = null;
+	            InputStream in = socket.getInputStream();
+	            objectInput = new ObjectInputStream(in);
+	            final_packet = (String[]) objectInput.readObject();
+	            String nonce;
+	            
+	            serverSocket.close();
+	            socket.close();
+	            if (final_packet[0] == "FROM_TSP" && final_packet[1] == "NONCE_RESPONSE"){
+	                nonce = final_packet[2];
+	            }
+	            else {
+	                nonce = "";
+	            }
+	            return nonce;
+	            
+	        }catch(Exception e){
+	            e.printStackTrace();
+	            return e.toString();
+	        }
+	    }
+	    
+	    public String getDynamicSecurityCode(){
+	        return "";
+	    }
+    
 	public static void main(String[] args){
 		clientTest client = new clientTest();
 		Scanner s = new Scanner(System.in);
@@ -137,9 +141,7 @@ public class clientTest {
 		
 		if (option.equals("PAY")){
 			//Request a nonce from Server
-			client.CliNonce = client.getClientNonce();
 			packet[1] = "REQUEST_NONCE";
-			packet[2] = client.CliNonce;
 			client.sendPacket(packet,TSPPORT);
 			//Receive Nonce
 			serverNonce = client.receiveNonce();
@@ -149,8 +151,8 @@ public class clientTest {
 			//Token Requestor ID, Token, Token Expiry Date, Client Nonce, Dynamic Security Code 
 			packet[1] = "USE";
 			packet[2] = "1789447862";
-			packet[3] = client.TokenRequestor_ID;
-			packet[4] = client.Token;
+			packet[3] = client.Token;
+			packet[4]= client.Token_requestor_id; 
 			packet[5] = client.Expiry_Date;
 			packet[6] = serverNonce;
 			//Check how to generate DSC
@@ -163,10 +165,11 @@ public class clientTest {
 			
 			client.sendPacket(packet,NEXTPORT);
 		}
+		
 		else if(option.equals("ADD")){
 			packet[1] = "ADD";
-			packet[2] = "0123456789";
-			packet[3] = "0922"; //MMYY
+			packet[2] = "1234567890";
+			packet[3] = "0712"; //MMYY
 			client.sendPacket(packet,TSPPORT);
 		}
 		client.receivePacket();
