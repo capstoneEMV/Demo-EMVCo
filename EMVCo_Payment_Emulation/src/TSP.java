@@ -167,30 +167,37 @@ public class TSP {
         return idOne.toString();
     }
     private String tokenGeneration(String card) throws Exception {
+	SecureRandom random1 = new SecureRandom();
+        byte bytes[] = new byte[20];
+        random1.nextBytes(bytes);
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		byte[] messageDigest = md.digest((card+bytes).getBytes());
+		String token = messageDigest.toString();
+		return token;
 	       
-        String token = "" ;
+//        String token = "" ;
         
-        try {
-            String md5 = getBinaryToken(card);
+//       try {
+//            String md5 = getBinaryToken(card);
 
           
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		md.update(card.getBytes());
-		return Integer.toString(md.hashCode());
-	}
-    private static String getBinaryToken(String card) throws UnsupportedEncodingException, NoSuchAlgorithmException{
+//       } catch (Exception e){
+//            e.printStackTrace();
+//       }
+//		MessageDigest md = MessageDigest.getInstance("SHA-256");
+//		md.update(card.getBytes());
+//		return Integer.toString(md.hashCode());
+//	}
+//    private static String getBinaryToken(String card) throws UnsupportedEncodingException, NoSuchAlgorithmException{
         
-        String TokenData = card;
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        byte[] messageDigest = md.digest(TokenData.getBytes());
-        String token = Base64.encodeBase64URLSafeString(messageDigest);
+//        String TokenData = card;
+//        MessageDigest md = MessageDigest.getInstance("MD5");
+//        byte[] messageDigest = md.digest(TokenData.getBytes());
+//        String token = Base64.encodeBase64URLSafeString(messageDigest);
         
-        return token;
+ //       return token;
         
-    }
+//    }
     
     private boolean validateRequestor(String requestor) {
         String result = null;
