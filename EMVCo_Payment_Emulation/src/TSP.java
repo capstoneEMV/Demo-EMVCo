@@ -4,16 +4,15 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Random;
 import java.security.SecureRandom;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.Random;
 import org.apache.commons.codec.binary.Base64;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.security.MessageDigest;
 import org.hibernate.annotations.ForeignKey;
 import com.chilkatsoft.*;
 import java.text.SimpleDateFormat;
@@ -57,15 +56,19 @@ public class TSP {
 		String doHash;
 		doHash = packet[3] + DSC_SEPARATOR + packet[4] + DSC_SEPARATOR + packet[5]
 				+ DSC_SEPARATOR + clientNonce + DSC_SEPARATOR + nonce;
-		System.out.println(doHash);
+		//System.out.println(doHash);
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		byte [] byteStr = doHash.getBytes();
 		md.update(byteStr);
 		byte [] mdBytes = md.digest();
-		System.out.println(mdBytes);
-		System.out.println(packet[7]);
-		System.out.println(Integer.toString(mdBytes.hashCode()));
-		if (Integer.toString(mdBytes.hashCode()).equals(packet[7])){
+		//System.out.println(mdBytes);
+		
+		//System.out.println(packet[7]);
+		//System.out.println(Integer.toString(mdBytes.hashCode()));
+		//if (Integer.toString(mdBytes.hashCode()).equals(packet[7])){
+		//	return Boolean.TRUE;
+		//}
+		if (Arrays.equals(mdBytes, Base64.decodeBase64(packet[7]))){
 			return Boolean.TRUE;
 		}
 		else
@@ -130,11 +133,11 @@ public class TSP {
         
         else if (type.equals("USE")) {
             String requestor_id = packet[3];
-            System.out.println(packet[3]);
+            //System.out.println(packet[3]);
             if (validateRequestor(requestor_id) == true) {
             	//Check for DSC
             	if (verifyDSC(packet)){
-            		String [] serverPkt = {"FROM_TSP", packet[4], packet[5]}; 
+            		String [] serverPkt = {"FROM_TSP", "" , packet[4], packet[5]}; 
             		//packet[2] = getCard(data);
             		sendPacket(serverPkt, NEXTPORT);
             		
@@ -147,7 +150,7 @@ public class TSP {
         
         else if (type.equals("REQUEST_NONCE")) {
             nonce = nextSessionId();
-            System.out.println(nonce);
+            //System.out.println(nonce);
             clientNonce = packet[2];
             packet[0] = "FROM_TSP";
             packet[1] = "NONCE_RESPONSE";
