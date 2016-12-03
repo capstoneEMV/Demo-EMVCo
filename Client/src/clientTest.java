@@ -153,7 +153,7 @@ public class clientTest {
 			//Send packet for payment
 			//Token Requestor ID, Token, Token Expiry Date, Client Nonce, Dynamic Security Code 
 			packet[1] = "USE";
-			packet[2] = "1789447862";
+			packet[2] = "1940030785";
 			packet[3] = client.Token_requestor_id;
 			packet[4] = client.Token;
 			packet[5] = client.Expiry_Date;

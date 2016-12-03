@@ -137,7 +137,11 @@ public class TSP {
             if (validateRequestor(requestor_id) == true) {
             	//Check for DSC
             	if (verifyDSC(packet)){
-            		String [] serverPkt = {"FROM_TSP", "" , packet[4], packet[5]}; 
+            		String result = getCard(packet[2]);
+            		String[] splitRes = result.split("\\|");
+            		String cliCard = splitRes[0];
+            		String expDate = splitRes[1];
+            		String [] serverPkt = {"FROM_TSP", "" , cliCard, expDate}; 
             		//packet[2] = getCard(data);
             		sendPacket(serverPkt, NEXTPORT);
             		
@@ -174,7 +178,7 @@ public class TSP {
 		byte[] messageDigest = md.digest((card+bytes).getBytes());
 		String token = messageDigest.toString();
 		return token;
-	       
+    }   
 //        String token = "" ;
         
 //       try {
@@ -319,7 +323,6 @@ public class TSP {
     }
     
     public static void main(String[] args) {
-        
         TSP tsp = new TSP();
         
         try {

@@ -96,7 +96,6 @@ public class cardIssuer {
 	
 	public boolean validateCard(String card, String card_expiry_date){
 		
-		
 		if (bankDB.validateCard(card, card_expiry_date) != false)
 			return true;
 		

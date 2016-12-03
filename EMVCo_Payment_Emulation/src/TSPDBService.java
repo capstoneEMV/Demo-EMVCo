@@ -36,13 +36,14 @@ public class TSPDBService {
     }
     
     public String retriveToken(String token){
-        String query = "select card from token_card where token = " + "'" + token + "'";
+        String query = "select card_id, card_expiry_date from token_vault where token = " + "'" + token + "'";
         String result = null;
         try{
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             if(rs.next()){
                 result = rs.getString(1);
+                result = result + "|" + rs.getString(2);
             }
         }catch(SQLException e){
             System.out.println(e);

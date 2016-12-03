@@ -21,7 +21,7 @@ public class bankDBService {
     }
     
     public boolean validateCard(String user_card, String user_card_expiry_date){
-        String query = "select card, card_expiry_date from cardvalidation where card = " + "'" + user_card + "'";
+        String query = "select card, card_expiry_date from cardvalidation where card = " + "'" + user_card + "' and card_expiry_date = '" + user_card_expiry_date + "'";
         String ID=null;
         String exp=null;
         boolean result=true;
@@ -34,7 +34,6 @@ public class bankDBService {
                 exp=rs.getString(2);
                 
             }
-            System.out.println(ID);
             if (user_card.equals(ID) && user_card_expiry_date.equals(exp))
             {
                 result =true;		 
