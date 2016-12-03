@@ -106,12 +106,14 @@ public class TSP {
                     SimpleDateFormat format1 = new SimpleDateFormat("MMYY");
                     String inActiveDate = null;
                     inActiveDate = format1.format(date1);
-                    System.out.println(inActiveDate );
+                    //System.out.println(inActiveDate );
                     token = tokenGeneration(data);
                     //						System.out.println(token);
-                    
-                    
-                    //should add expiry date in the DB too.
+                    //Replacing the last 4 digits of the token
+                    //with the last 4 digits of the card
+                    //System.out.println(pending_card);
+                    String last4 = pending_card.substring(pending_card.length()-4, pending_card.length());
+                    token = token.substring(0, token.length()-5) + last4;
                     
                     packet[0] = "FROM_TSP";
                     packet[2] = token;
@@ -171,12 +173,18 @@ public class TSP {
         return idOne.toString();
     }
     private String tokenGeneration(String card) throws Exception {
-	SecureRandom random1 = new SecureRandom();
+    	SecureRandom random1 = new SecureRandom();
+    	String token;
         byte bytes[] = new byte[20];
         random1.nextBytes(bytes);
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		byte[] messageDigest = md.digest((card+bytes).getBytes());
-		String token = messageDigest.toString();
+		md.update((card+bytes).getBytes());
+		byte [] mdByte = md.digest();
+		int tokenInt = mdByte.hashCode();
+		String arg = Base64.encodeBase64URLSafeString(mdByte);
+		String hexMd = String.format("%040x", new BigInteger(1, arg.getBytes(StandardCharsets.UTF_8)));
+		BigInteger value = new BigInteger(hexMd,16);
+		token = value.toString().substring(0,16);
 		return token;
     }   
 //        String token = "" ;

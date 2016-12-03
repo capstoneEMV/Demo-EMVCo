@@ -17,9 +17,6 @@ public class cardIssuer {
 	static final int PORT = 5555;
 	String[] tsp_packet = null;
 
-	
-	
-
 	public cardIssuer(){
 		bankDB = new bankDBService();
 		bankDB.makeConnection();
@@ -34,7 +31,6 @@ public class cardIssuer {
 		
 		try{
 			while(true){
-				
 				ServerSocket serverSocket = new ServerSocket(PORT);
 				Socket socket = serverSocket.accept();
 				InputStream in = socket.getInputStream();
@@ -42,13 +38,17 @@ public class cardIssuer {
 				tsp_packet = (String[]) objectInput.readObject();
 				card = tsp_packet[2];
 				card_expiry_date=tsp_packet[3];
-				if(validateCard(card, card_expiry_date)){
+				if (tsp_packet[1].equals("ADD")){
 					result = "Approved";
 				}
-				
-				else
-					result = "Declined";
-				
+				else {
+					if(validateCard(card, card_expiry_date)){
+						result = "Approved";
+					}
+					
+					else
+						result = "Declined";
+				}
 				//serverSocket.close();
 				serverSocket.close();
 				
@@ -66,14 +66,14 @@ public class cardIssuer {
 			packet[0] = "FROM_ISSUER_ADD";
 			packet[1] = "ISSUER_SIGNED";
 			packet[2] = result;
-			packet[3]=tsp_packet[2];
+			packet[3] = tsp_packet[2];
 		}
 		else{
 			System.out.println("ISSUER received a packet for Payment validation");
 			packet[0] = "FROM_ISSUER";
-			packet[1]= "ISSUER_SIGNED";
+			packet[1] = "ISSUER_SIGNED";
 			packet[2] = result;
-			packet[3]=null;
+			packet[3] = null;
 		}
 		
 		try{

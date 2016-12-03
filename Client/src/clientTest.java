@@ -11,7 +11,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Base64;
+//import java.util.Base64;
 import java.util.Scanner;
 import java.security.MessageDigest;
 
@@ -66,7 +66,7 @@ public class clientTest {
 			
 			System.out.println("");
 			System.out.println("Here is your receipt:");
-			for (int i=0; i<final_packet.length;i++){
+			for (int i=0; i<2;i++){
 				if (final_packet[i] != null){
 					System.out.println(final_packet[i]);
 				}
@@ -153,7 +153,7 @@ public class clientTest {
 			//Send packet for payment
 			//Token Requestor ID, Token, Token Expiry Date, Client Nonce, Dynamic Security Code 
 			packet[1] = "USE";
-			packet[2] = "1940030785";
+			packet[2] = "105613178383456";
 			packet[3] = client.Token_requestor_id;
 			packet[4] = client.Token;
 			packet[5] = client.Expiry_Date;
@@ -173,7 +173,7 @@ public class clientTest {
 		
 		else if(option.equals("ADD")){
 			packet[1] = "ADD";
-			packet[2] = "1234567890";
+			packet[2] = "1234567890123456";
 			packet[3] = "0712"; //MMYY
 			client.sendPacket(packet,TSPPORT);
 		}
