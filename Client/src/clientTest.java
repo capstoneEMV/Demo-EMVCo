@@ -135,12 +135,12 @@ public class clientTest {
 		String serverNonce = "";
 		//String[] Nonce;
 		System.out.println("What do you want to do:"
-				+ "1. PAY"
-				+ "2. ADD");
+				+ "1. USE (ID) "
+				+ "2. ADD ");
 		String option = s.nextLine();
 		s.close();
 		
-		if (option.equals("PAY")){
+		if (option.equals("USE")){
 			client.CliNonce = client.getClientNonce();
 			//Request a nonce from Server
 			packet[1] = "REQUEST_NONCE";
