@@ -69,7 +69,7 @@ public class cardIssuer {
 			packet[3] = tsp_packet[2];
 		}
 		else{
-			System.out.println("ISSUER received a packet for Payment validation");
+			System.out.println("ISSUER received a packet for Identity validation");
 			packet[0] = "FROM_ISSUER";
 			packet[1] = "ISSUER_SIGNED";
 			packet[2] = result;

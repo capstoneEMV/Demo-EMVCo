@@ -259,7 +259,7 @@ public class TSP {
             client_packet = (String[]) objectInput.readObject();
             
             //			if (client_packet[0].equals("FROM_ACQUIRER")) {
-            //				System.out.println("TSP received a packet from ACQUIRER for payment request");
+            //				System.out.println("TSP received a packet from ACQUIRER for Identity request");
             //				client_packet[0] = "FROM_TSP";
             //				handleRequest(client_packet);
             //				objectInput.close();
@@ -267,7 +267,7 @@ public class TSP {
             //			}
             
             if (client_packet[0].equals("FROM_MERCHANT")) {
-                System.out.println("TSP received a packet from MERCHANT for payment request");
+                System.out.println("TSP received a packet from MERCHANT for Identity request");
                 client_packet[0] = "FROM_TSP";
                 handleRequest(client_packet);
                 objectInput.close();
@@ -275,7 +275,7 @@ public class TSP {
             }
             
             //			else if (client_packet[0].equals("FROM_ISSUER")) {
-            //				System.out.println("TSP received a packet from ISSUER for payment decision");
+            //				System.out.println("TSP received a packet from ISSUER for Identity decision");
             //				client_packet[0] = "FROM_TSP";
             //				sendPacket(client_packet, PREPORT);
             //				objectInput.close();
@@ -284,7 +284,7 @@ public class TSP {
             //			}
             
             else if (client_packet[0].equals("FROM_ISSUER")) {
-                System.out.println("TSP received a packet from ISSUER for payment decision");
+                System.out.println("TSP received a packet from ISSUER for Identity decision");
                 client_packet[0] = "FROM_TSP";
                 sendPacket(client_packet, MERCHANT);
                 objectInput.close();
